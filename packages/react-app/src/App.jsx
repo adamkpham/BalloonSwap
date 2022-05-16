@@ -184,6 +184,7 @@ function App(props) {
   //
   // 🧫 DEBUG 👨🏻‍🔬
   //
+
   useEffect(() => {
     if (
       DEBUG &&
@@ -256,7 +257,9 @@ function App(props) {
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
-  // ** TODO: The events are not showing up! Left most of it commented out, but can uncomment and play with! Pretty sure you need to go into DEX.jsx as that is where most of the UI Home-page is being derived from. 😵 📟 Listen for broadcast events
+  // ** TODO: The events are not showing up! Left most of it commented out, but can uncomment and play with!
+  // Pretty sure you need to go into DEX.jsx as that is where most of the UI Home-page is being derived from.
+  // 😵 📟 Listen for broadcast events
 
   const EthToTokenSwapEvents = useEventListener(readContracts, "DEX", "EthToTokenSwap", localProvider, 1);
   console.log("⟠ -->🎈 EthToTokenSwapEvents:", EthToTokenSwapEvents);
@@ -284,23 +287,23 @@ function App(props) {
           <Link to="/">Home</Link>
         </Menu.Item>
         <Menu.Item key="/Events">
-          <Link to="/Events">Eventlist 📜</Link>
+          <Link to="/Events">Events</Link>
         </Menu.Item>
         <Menu.Item key="/debug">
-          <Link to="/debug">Debug Contracts</Link>
+          <Link to="/debug">Contracts</Link>
         </Menu.Item>
-        <Menu.Item key="/hints">
+        {/* <Menu.Item key="/hints">
           <Link to="/hints">Hints</Link>
-        </Menu.Item>
-        <Menu.Item key="/exampleui">
+        </Menu.Item> */}
+        {/* <Menu.Item key="/exampleui">
           <Link to="/exampleui">ExampleUI</Link>
-        </Menu.Item>
-        <Menu.Item key="/mainnetdai">
+        </Menu.Item> */}
+        {/* <Menu.Item key="/mainnetdai">
           <Link to="/mainnetdai">Mainnet DAI</Link>
         </Menu.Item>
         <Menu.Item key="/subgraph">
           <Link to="/subgraph">Subgraph</Link>
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
 
       <Switch>
@@ -375,6 +378,17 @@ function App(props) {
             mainnetProvider={mainnetProvider}
             startBlock={1}
           />
+
+          {/* added an event here for approval event emissions */}
+          <Events
+            contracts={readContracts}
+            contractName="Balloons"
+            eventName="Approval"
+            localProvider={localProvider}
+            mainnetProvider={mainnetProvider}
+            startBlock={1}
+          />
+          {/* end added event */}
         </Route>
         }
         <Route exact path="/debug">
@@ -492,7 +506,7 @@ function App(props) {
 
         <TokenBalance name={"Balloons"} img={"🎈"} address={address} contracts={readContracts} />
         <h3>
-          💦💦: <TokenBalance balance={liquidity} />
+          💦 <TokenBalance balance={liquidity} />
         </h3>
         {FaucetHint}
       </div>

@@ -10,6 +10,9 @@ import Curve from "./Curve";
 import TokenBalance from "./TokenBalance";
 import Blockies from "react-blockies";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEthereum } from "@fortawesome/free-brands-svg-icons";
+
 const contractName = "DEX";
 const tokenName = "Balloons";
 
@@ -31,13 +34,15 @@ export default function Dex(props) {
   const ethBalanceFloat = parseFloat(ethers.utils.formatEther(contractBalance));
   const liquidity = useContractReader(props.readContracts, contractName, "totalLiquidity");
 
+  const ethIcon = <FontAwesomeIcon icon={faEthereum} />;
+
   const rowForm = (title, icon, onClick) => {
     return (
       <Row>
-        <Col span={8} style={{ textAlign: "right", opacity: 0.333, paddingRight: 6, fontSize: 24 }}>
+        <Col span={8} style={{ textAlign: "center", opacity: 0.333, paddingRight: 6, fontSize: 24 }}>
           {title}
         </Col>
-        <Col span={16}>
+        <Col span={12}>
           <div style={{ cursor: "pointer", margin: 2 }}>
             <Input
               onChange={e => {
@@ -69,13 +74,13 @@ export default function Dex(props) {
   if (props.readContracts && props.readContracts[contractName]) {
     display.push(
       <div>
-        {rowForm("ethToToken", "💸", async value => {
+        {rowForm(`swap ETH for BAL`, "💸", async value => {
           let valueInEther = ethers.utils.parseEther("" + value);
           let swapEthToTokenResult = await tx(writeContracts[contractName]["ethToToken"]({ value: valueInEther }));
           console.log("swapEthToTokenResult:", swapEthToTokenResult);
         })}
 
-        {rowForm("tokenToEth", "🔏", async value => {
+        {rowForm("swap BAL for ETH", "🔏", async value => {
           let valueInEther = ethers.utils.parseEther("" + value);
           console.log("valueInEther", valueInEther);
           let allowance = await props.readContracts[tokenName].allowance(
@@ -103,9 +108,9 @@ export default function Dex(props) {
           console.log("swapTxResult:", swapTxResult);
         })}
 
-        <Divider> Liquidity ({liquidity ? ethers.utils.formatEther(liquidity) : "none"}):</Divider>
+        <Divider style={{ fontSize: 24 }}>({liquidity ? "💦 " + ethers.utils.formatEther(liquidity) : "none"})</Divider>
 
-        {rowForm("deposit", "📥", async value => {
+        {rowForm("add liquidity (in ETH)", "📥", async value => {
           let valueInEther = ethers.utils.parseEther("" + value);
           let valuePlusExtra = ethers.utils.parseEther("" + value * 1.03);
           console.log("valuePlusExtra", valuePlusExtra);
@@ -124,7 +129,7 @@ export default function Dex(props) {
           await tx(writeContracts[contractName]["deposit"]({ value: valueInEther, gasLimit: 200000 }));
         })}
 
-        {rowForm("withdraw", "📤", async value => {
+        {rowForm("remove liquidity (in ETH)", "📤", async value => {
           let valueInEther = ethers.utils.parseEther("" + value);
           let withdrawTxResult = await tx(writeContracts[contractName]["withdraw"](valueInEther));
           console.log("withdrawTxResult:", withdrawTxResult);
@@ -134,14 +139,16 @@ export default function Dex(props) {
   }
 
   return (
-    <Row span={24}>
-      <Col span={12}>
+    <Row span={12}>
+      <Col span={24}>
         <Card
           title={
             <div>
-              <Address value={contractAddress} />
-              <div style={{ float: "right", fontSize: 24 }}>
-                {parseFloat(ethers.utils.formatEther(contractBalance)).toFixed(4)} ⚖️
+              <div style={{ float: "center", fontSize: 24 }}>
+                <Address value={contractAddress} />
+                {"   "}
+                {ethIcon}
+                {parseFloat(ethers.utils.formatEther(contractBalance)).toFixed(4)}
                 <TokenBalance name={tokenName} img={"🎈"} address={contractAddress} contracts={props.readContracts} />
               </div>
             </div>
@@ -151,7 +158,7 @@ export default function Dex(props) {
         >
           {display}
         </Card>
-        <Row span={12}>
+        {/* <Row span={12}>
           <Contract
             name="Balloons"
             signer={props.signer}
@@ -161,9 +168,9 @@ export default function Dex(props) {
             blockExplorer={props.blockExplorer}
             contractConfig={props.contractConfig}
           />
-        </Row>
+        </Row> */}
       </Col>
-      <Col span={12}>
+      {/* <Col span={12}>
         <div style={{ padding: 20 }}>
           <Curve
             addingEth={values && values["ethToToken"] ? values["ethToToken"] : 0}
@@ -174,7 +181,7 @@ export default function Dex(props) {
             height={500}
           />
         </div>
-      </Col>
+      </Col> */}
     </Row>
   );
 }
