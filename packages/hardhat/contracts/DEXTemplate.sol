@@ -97,7 +97,7 @@ contract DEX {
         uint256 xInput,
         uint256 xReserves,
         uint256 yReserves
-    ) public pure returns (uint256 yOutput) {
+    ) public view returns (uint256 yOutput) {
 
         uint256 fee = 3; //this exchange fee parameter is expressed in tenths of a percent
         uint256 protocolFee = 0; //currently inactive on Uniswap but maybe good to be aware of as a possibility
