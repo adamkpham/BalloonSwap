@@ -28,7 +28,6 @@ contract DEX {
      */
     event EthToTokenSwap(
         address recipient, 
-        string outcome, 
         uint256 ethValue, 
         uint256 tokenValue
     );
@@ -38,7 +37,6 @@ contract DEX {
      */
     event TokenToEthSwap(
         address recipient, 
-        string outcome, 
         uint256 tokenValue, 
         uint256 ethValue
     );
@@ -165,7 +163,7 @@ contract DEX {
         uint256 tokensToReceive = price(msg.value, ethReserve, tokenReserve);
 
         require(token.transfer(msg.sender, tokensToReceive), "ETH -> BAL transfer failed");
-        emit EthToTokenSwap(msg.sender, "ETH => BAL swap", msg.value, tokensToReceive);
+        emit EthToTokenSwap(msg.sender, msg.value, tokensToReceive);
 
         return tokenOutput;
     }
@@ -184,7 +182,7 @@ contract DEX {
         (bool sent,) = msg.sender.call{value: ethToReceive}(""); 
         require(sent, "Transaction reverted");
         
-        emit TokenToEthSwap(msg.sender, "BAL => ETH swap", tokenInput, ethToReceive);
+        emit TokenToEthSwap(msg.sender, tokenInput, ethToReceive);
 
         return ethOutput;
     }
